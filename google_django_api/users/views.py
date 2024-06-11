@@ -7,8 +7,7 @@ from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
 from django.utils.decorators import method_decorator
-
-from google_django_api.mixins import *
+import requests
 
 from .forms import (
     UserForm,
@@ -16,8 +15,37 @@ from .forms import (
     AuthForm,
 )
 
-result = "Error"
-message = "There was an error, please try again"
+
+def recaptcha_validation(token):
+    """ Validates the reCAPTCHA token """
+    recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify'
+    payload = {
+        'secret': settings.RECAPTCHA_PRIVATE_KEY,
+        'response': token
+    }
+    response = requests.post(recaptcha_url, data=payload)
+    return response.json()
+
+
+class AjaxFormMixin:
+    def form_invalid(self, form):
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            response_data = {
+                'status': 'fail',
+                'errors': form.errors,
+            }
+            return JsonResponse(response_data, status=400)
+        else:
+            return super().form_invalid(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            response_data = {
+                'status': 'success',
+            }
+            return JsonResponse(response_data)
+        return response
 
 
 class AccountView(TemplateView):
@@ -40,7 +68,7 @@ def profile_view(request):
 
     form = UserProfileForm(instance=up)
 
-    if request.is_ajax():
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         form = UserProfileForm(data=request.POST, instance=up)
         if form.is_valid():
             obj = form.save()
@@ -52,9 +80,7 @@ def profile_view(request):
             message = FormErrors(form)
         data = {'result': result, 'message': message}
         return JsonResponse(data)
-
     else:
-
         context = {'form': form}
         context['google_api_key'] = settings.GOOGLE_API_KEY
         context['base_country'] = settings.BASE_COUNTRY
@@ -80,7 +106,7 @@ class SignUpView(AjaxFormMixin, FormView):
     # overwrite the mixin logic to get, check and save reCAPTURE score
     def form_valid(self, form):
         response = super(AjaxFormMixin, self).form_valid(form)
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             token = form.cleaned_data.get('token')
             captcha = recaptcha_validation(token)
             if captcha["success"]:
@@ -114,7 +140,7 @@ class SignInView(AjaxFormMixin, FormView):
 
     def form_valid(self, form):
         response = super(AjaxFormMixin, self).form_valid(form)
-        if self.request.is_ajax():
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             # attempt to authenticate user

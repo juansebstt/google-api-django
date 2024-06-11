@@ -1,62 +1,62 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block extend_head %}
-
-<script src='https://www.google.com/recaptcha/api.js?render={{recaptcha_site_key}}'></script>
-
+<script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
 {% endblock %}
 
 {% block content %}
-
-<h3>Django Google API Course - Sign Up</h3>
-
+<h3>Django Google API - Sign Up</h3>
 <div class="container">
+    <form id="signupform" method="POST" action="/sign-up">
+        {% csrf_token %}
+        <label for="first_name">First Name</label>
+        {{ form.first_name }}
 
+        <label for="last_name">Last Name</label>
+        {{ form.last_name }}
 
-  <form id="signupform" method="POST" action="/sign-up">
-    {% csrf_token %}
+        <label for="username">Username</label>
+        {{ form.username }}
 
+        <label for="password1">Password</label>
+        {{ form.password1 }}
 
-    <label for="first_name">First Name</label>
-    {{form.first_name}}
+        <label for="password2">Confirm Password</label>
+        {{ form.password2 }}
 
-    <label for="last_name">Last Name</label>
-    {{form.last_name}}
+        <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
 
-    <label for="username">Username</label>
-    {{form.username}}
+        <label class="check-container">Show Passwords
+            <input type="checkbox" onclick="showPword()">
+            <span class="checkmark"></span>
+        </label>
 
-    <label for="password1">Password</label>
-    {{form.password1}}
-
-    <label for="password2">Confirm Password</label>
-    {{form.password2}}
-
-    {{form.token}}
-
-    <label class="check-container">Show Passwords
-     <input type="checkbox" onclick="showPword()">
-     <span class="checkmark"></span>
-    </label>
-
-    <button type="submit">Sign up</button>
-
-  </form>
+        <button type="button" onclick="submitForm()">Sign up</button>
+    </form>
 </div>
-
-
-</div>
-
 {% endblock %}
 
 {% block extend_footer %}
-
 <script type="text/javascript">
-  // Create a variable that can be used in main.js
-  var recaptcha_site_key = '{{recaptcha_site_key|safe}}'
+    function showPword() {
+        var x = document.getElementById("id_password1");
+        var y = document.getElementById("id_password2");
+        if (x.type === "password") {
+            x.type = "text";
+            y.type = "text";
+        } else {
+            x.type = "password";
+            y.type = "password";
+        }
+    }
+
+    function submitForm() {
+        grecaptcha.ready(function() {
+            grecaptcha.execute('{{ recaptcha_site_key }}', {action: 'signup'}).then(function(token) {
+                document.getElementById("signupform").submit();
+            });
+        });
+    }
 </script>
-
-
 {% endblock %}

@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.views.generic.edit import FormView
 
 
+
 def form_error(*args):
     """
     Handles form error that are passed back to AJAX calls
@@ -45,23 +46,24 @@ def redirect_params(**kwargs):
     return response
 
 
-class AjaxFormMixin(object, FormView):
-    """
-    Mixin to ajaxify django form - can be overwritten in view by calling form_valid method
-    """
-
+class AjaxFormMixin(FormView):
     def form_invalid(self, form):
-        response = super(AjaxFormMixin, self).form_invalid(form)
-        if self.request.is_ajax():
-            message = form_error(form)
-            return JsonResponse({'result': 'Error', 'message': message})
-        return response
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            response_data = {
+                'status': 'fail',
+                'errors': form.errors,
+            }
+            return JsonResponse(response_data, status=400)
+        else:
+            return super().form_invalid(form)
 
     def form_valid(self, form):
-        response = super(AjaxFormMixin, self).form_valid(form)
-        if self.request.is_ajax():
-            form.save()
-            return JsonResponse({'result': 'Success', 'message': ""})
+        response = super().form_valid(form)
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            response_data = {
+                'status': 'success',
+            }
+            return JsonResponse(response_data)
         return response
 
 

@@ -7,27 +7,27 @@ from .models import UserProfile
 
 class UserForm(UserCreationForm):
     """
-    Form that uses built-in UserCreationForm to handel user creation
+    Form that uses built-in UserCreationForm to handle user creation
     """
     # First name field
     first_name = forms.CharField(max_length=30, required=True,
-                                 widget=forms.TextInput(attrs={'placeholder': '*Your first name..'}))
+                                 widget=forms.TextInput(attrs={'placeholder': '*Your first name..', 'id': 'id_first_name'}))
 
     # Last name field
     last_name = forms.CharField(max_length=30, required=True,
-                                widget=forms.TextInput(attrs={'placeholder': '*Your last name..'}))
+                                widget=forms.TextInput(attrs={'placeholder': '*Your last name..', 'id': 'id_last_name'}))
 
     # Email field
     username = forms.EmailField(max_length=254, required=True,
-                                widget=forms.TextInput(attrs={'placeholder': '*Email..'}))
+                                widget=forms.TextInput(attrs={'placeholder': '*Email..', 'id': 'id_username'}))
 
     # Password field
     password1 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': '*Password..', 'class': 'password'}))
+        widget=forms.PasswordInput(attrs={'placeholder': '*Password..', 'class': 'password', 'id': 'id_password1'}))
 
     # Confirm password field
     password2 = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': '*Confirm Password..', 'class': 'password'}))
+        widget=forms.PasswordInput(attrs={'placeholder': '*Confirm Password..', 'class': 'password', 'id': 'id_password2'}))
 
     # reCAPTCHA token
     token = forms.CharField(
