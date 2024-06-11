@@ -65,7 +65,7 @@ class AjaxFormMixin(object, FormView):
         return response
 
 
-def directions(*args, **kwargs):
+def directions_(*args, **kwargs):
     """
     Handles directions from Google
     """
