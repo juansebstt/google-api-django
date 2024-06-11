@@ -96,7 +96,7 @@ Python manage.py makemigrations
 
 To finally
 <pre>
-python manage.py runserver - On your localhost
+Python manage.py runserver - On your localhost
 </pre>
 
 
