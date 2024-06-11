@@ -80,7 +80,7 @@ Don't forget to activate the following Google API's:
 
 reCAPTURE Places API Maps Javascript API Directions API Distance Matrix API Geocoding API.
 
-And configure your API keys with your API information:
+And configure your API keys with your API information in the settings.py file:
 
 GOOGLE_API_KEY = ""
 
