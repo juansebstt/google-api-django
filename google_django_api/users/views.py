@@ -8,12 +8,7 @@ from django.views.generic.edit import FormView
 from django.views.generic.base import TemplateView
 from django.utils.decorators import method_decorator
 
-from google_django_api.mixins import (
-    AjaxFormMixin,
-    recaptcha_validation,
-    form_error,
-    redirect_params,
-)
+from google_django_api.mixins import *
 
 from .forms import (
     UserForm,
