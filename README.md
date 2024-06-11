@@ -76,3 +76,27 @@ urllib3==2.2.1
 </body>
 </html>
 
+Don't forget to activate the following Google API's:
+
+reCAPTURE Places API Maps Javascript API Directions API Distance Matrix API Geocoding API.
+
+And configure your API keys with your API information:
+
+GOOGLE_API_KEY = ""
+
+RECAPTCHA_PUBLIC_KEY = ""
+
+RECAPTCHA_PRIVATE_KEY = ""
+
+Then run
+
+<pre>
+Python manage.py makemigrations
+</pre>
+
+To finally
+<pre>
+python manage.py runserver - On your localhost
+</pre>
+
+
